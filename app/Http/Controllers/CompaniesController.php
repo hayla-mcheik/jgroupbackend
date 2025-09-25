@@ -7,15 +7,16 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 class CompaniesController extends Controller
 {
-    public function index()
+public function index()
 {
-    $projects = Companies::orderBy('created_at', 'desc')->get();
+    $projects = Companies::orderBy('id', 'asc')->get(); // start from 1
 
     return response()->json([
         'status' => 'success',
         'data' => $projects
     ]);
 }
+
 
     /**
      * Store a newly created projects in storage.
