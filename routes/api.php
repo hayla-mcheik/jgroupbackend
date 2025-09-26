@@ -4,6 +4,7 @@ use App\Http\Controllers\AboutController;
 use App\Http\Controllers\AboutHomeController;
 use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\CompaniesController;
+use App\Http\Controllers\ContactController;
 use App\Http\Controllers\HeroBannerController;
 use App\Http\Controllers\LocationsController;
 use App\Http\Controllers\MilestoneController;
@@ -69,3 +70,5 @@ Route::post('/abouthome', [AboutHomeController::class, 'update']);
 Route::get('/herobanner', [HeroBannerController::class, 'index']);
 Route::post('/herobanner', [HeroBannerController::class, 'update']);
 Route::post('/subscribe', [SubscribersController::class, 'subscribe']);
+
+Route::post('/contact',[ContactController::class,'submit']);
