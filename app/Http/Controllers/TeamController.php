@@ -34,7 +34,7 @@ class TeamController extends Controller
         ]);
 
         if ($request->hasFile('image')) {
-             $path = $request->file('image')->store('technologies', 'public');
+             $path = $request->file('image')->store('team', 'public');
         $validatedData['image'] = 'storage/' . $path;
         }
 
@@ -91,7 +91,7 @@ class TeamController extends Controller
                 Storage::delete($team->image);
             }
             
-          $path = $request->file('image')->store('technologies', 'public');
+          $path = $request->file('image')->store('team', 'public');
         $validatedData['image'] = 'storage/' . $path;
         }
 
