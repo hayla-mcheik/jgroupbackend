@@ -10,7 +10,7 @@ class TeamController extends Controller
 {
         public function index()
 {
-    $team = Team::orderBy('id', 'desc')->get();
+    $team = Team::orderBy('id', 'asc')->get();
     return response()->json([
         'status' => 'success',
         'data' => $team

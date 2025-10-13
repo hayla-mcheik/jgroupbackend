@@ -10,7 +10,7 @@ class TechnologiesController extends Controller
 {
     public function index()
 {
-    $technologies = Technologies::orderBy('created_at', 'desc')->get();
+    $technologies = Technologies::orderBy('id', 'asc')->get();
 
     return response()->json([
         'status' => 'success',
