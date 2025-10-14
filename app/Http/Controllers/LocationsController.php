@@ -73,8 +73,8 @@ class LocationsController extends Controller
 
         $validatedData = $request->validate([
          'name' => 'sometimes|string|max:255',
-        'phone' => 'sometimes|string|max:255',
-        'email' => 'sometimes|string|max:255',
+        'phone' => 'nullable|string|max:255',
+        'email' => 'nullable|string|max:255',
         'description' => 'sometimes|string',
 'position_x' => 'required|numeric|between:0,100',
 'position_y' => 'required|numeric|between:0,100',
