@@ -16,7 +16,7 @@ use App\Http\Controllers\TeamController;
 use App\Http\Controllers\TechnologiesController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-
+use Illuminate\Support\Facades\Mail;
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
@@ -72,3 +72,16 @@ Route::post('/herobanner', [HeroBannerController::class, 'update']);
 Route::post('/subscribe', [SubscribersController::class, 'subscribe']);
 
 Route::post('/contact',[ContactController::class,'submit']);
+
+Route::get('/test-sendmail', function () {
+    try {
+        Mail::raw('This is a test email from Laravel SMTP', function ($message) {
+            $message->to('mcheikhayla26@gmail.com')
+                    ->subject('Laravel SMTP Test Email');
+        });
+
+        return response()->json(['success' => true, 'message' => '✅ Mail sent successfully via SMTP.']);
+    } catch (\Exception $e) {
+        return response()->json(['success' => false, 'error' => $e->getMessage()]);
+    }
+});
