@@ -90,8 +90,10 @@ class TeamController extends Controller
                 Storage::delete($team->image);
             }
             
-          $path = $request->file('image')->store('technologies', 'public');
-        $validatedData['image'] = 'storage/' . $path;
+  $originalName = $request->file('image')->getClientOriginalName();
+$path = $request->file('image')->storeAs('technologies', $originalName, 'public');
+$validatedData['image'] = 'storage/' . $path;
+
         }
 
         $team->update($validatedData);
