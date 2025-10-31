@@ -33,7 +33,10 @@ class TeamController extends Controller
         ]);
 
         if ($request->hasFile('image')) {
-             $path = $request->file('image')->store('technologies', 'public');
+$originalName = $request->file('image')->getClientOriginalName();
+$path = $request->file('image')->storeAs('technologies', $originalName, 'public');
+$validatedData['image'] = 'storage/' . $path;
+
         $validatedData['image'] = 'storage/' . $path;
         }
 
