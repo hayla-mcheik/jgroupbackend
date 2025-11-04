@@ -7,5 +7,5 @@ use Illuminate\Database\Eloquent\Model;
 class News extends Model
 {
             protected $table='news';
-    protected $fillable=['title','description','image','date','links'];
+    protected $fillable=['title','description','image','date','links','file','type'];
 }

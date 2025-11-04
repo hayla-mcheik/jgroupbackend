@@ -5,30 +5,44 @@ namespace App\Http\Controllers;
 use App\Models\News;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+
 class NewsController extends Controller
 {
-            public function index()
+    public function index()
     {
+        // Ensure that the 'file' and 'type' fields are returned to the frontend
         $news = News::orderBy('date', 'desc')->get();
         return response()->json($news);
     }
 
-    /**
-     * Store a newly created news in storage.
-     */
     public function store(Request $request)
     {
+        // Added 'type' validation just in case, though it's set dynamically
         $validatedData = $request->validate([
             'title' => 'required|string|max:255',
             'links' => 'required|string',
             'description' => 'required|string',
             'date' => 'required|date',
-            'image' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+            // Allowed mimes include common image and video formats
+            'file' => 'required|file|mimes:jpeg,png,jpg,gif,webp,mp4,mov,avi,webm|max:20480', // up to 20MB
         ]);
 
-        if ($request->hasFile('image')) {
-              $path = $request->file('image')->store('news', 'public');
-        $validatedData['image'] = 'storage/' . $path;
+        // Default type
+        $type = 'image';
+
+        if ($request->hasFile('file')) {
+            $file = $request->file('file');
+            $path = $file->store('news', 'public');
+
+            // Detect file type (image or video) based on MIME type
+            $mimeType = $file->getMimeType();
+            $type = str_starts_with($mimeType, 'video') ? 'video' : 'image';
+
+            $validatedData['file'] = 'storage/' . $path; // The path to the media file
+            $validatedData['type'] = $type; // The media type (image or video)
+        } else {
+            // Handle case where file is required but somehow missing (should be caught by validation)
+            return response()->json(['message' => 'File upload failed'], 400);
         }
 
         $news = News::create($validatedData);
@@ -39,52 +53,48 @@ class NewsController extends Controller
         ], 201);
     }
 
-    /**
-     * Display the specified news.
-     */
     public function show($id)
     {
         $news = News::find($id);
-        
+
         if (!$news) {
-            return response()->json([
-                'message' => 'News not found'
-            ], 404);
+            return response()->json(['message' => 'News not found'], 404);
         }
 
         return response()->json($news);
     }
 
-    /**
-     * Update the specified news in storage.
-     */
     public function update(Request $request, $id)
     {
         $news = News::find($id);
-        
+
         if (!$news) {
-            return response()->json([
-                'message' => 'News not found'
-            ], 404);
+            return response()->json(['message' => 'News not found'], 404);
         }
 
         $validatedData = $request->validate([
             'title' => 'sometimes|string|max:255',
-                    'links' => 'required|string',
+            'links' => 'sometimes|string',
             'description' => 'sometimes|string',
             'date' => 'sometimes|date',
-            'image' => 'sometimes|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+            'file' => 'sometimes|file|mimes:jpeg,png,jpg,gif,webp,mp4,mov,avi,webm|max:20480',
         ]);
 
-        if ($request->hasFile('image')) {
-            // Delete old image if exists
-            if ($news->image) {
-                
-                Storage::delete($news->image);
+        if ($request->hasFile('file')) {
+            // Delete old file if exists
+            if ($news->file && Storage::exists(str_replace('storage/', 'public/', $news->file))) {
+                Storage::delete(str_replace('storage/', 'public/', $news->file));
             }
-            
-               $path = $request->file('image')->store('news', 'public');
-        $validatedData['image'] = 'storage/' . $path;
+
+            $file = $request->file('file');
+            $path = $file->store('news', 'public');
+
+            // Detect file type
+            $mimeType = $file->getMimeType();
+            $type = str_starts_with($mimeType, 'video') ? 'video' : 'image';
+
+            $validatedData['file'] = 'storage/' . $path;
+            $validatedData['type'] = $type;
         }
 
         $news->update($validatedData);
@@ -95,28 +105,20 @@ class NewsController extends Controller
         ]);
     }
 
-    /**
-     * Remove the specified news from storage.
-     */
     public function destroy($id)
     {
         $news = News::find($id);
-        
+
         if (!$news) {
-            return response()->json([
-                'message' => 'News not found'
-            ], 404);
+            return response()->json(['message' => 'News not found'], 404);
         }
 
-        // Delete associated image
-        if ($news->image) {
-            Storage::delete($news->image);
+        if ($news->file && Storage::exists(str_replace('storage/', 'public/', $news->file))) {
+            Storage::delete(str_replace('storage/', 'public/', $news->file));
         }
 
         $news->delete();
 
-        return response()->json([
-            'message' => 'News deleted successfully'
-        ]);
+        return response()->json(['message' => 'News deleted successfully']);
     }
 }
