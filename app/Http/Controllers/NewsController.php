@@ -19,10 +19,10 @@ class NewsController extends Controller
     {
         // Added 'type' validation just in case, though it's set dynamically
         $validatedData = $request->validate([
-            'title' => 'required|string|max:255',
+            'title' => 'nullable|string|max:255',
             'links' => 'required|string',
             'description' => 'required|string',
-            'date' => 'required|date',
+            'date' => 'nullable|date',
             // Allowed mimes include common image and video formats
             'file' => 'required|file|mimes:jpeg,png,jpg,gif,webp,mp4,mov,avi,webm|max:20480', // up to 20MB
         ]);
@@ -73,10 +73,10 @@ class NewsController extends Controller
         }
 
         $validatedData = $request->validate([
-            'title' => 'sometimes|string|max:255',
+            'title' => 'nullable|string|max:255',
             'links' => 'sometimes|string',
             'description' => 'sometimes|string',
-            'date' => 'sometimes|date',
+            'date' => 'nullable|date',
             'file' => 'sometimes|file|mimes:jpeg,png,jpg,gif,webp,mp4,mov,avi,webm|max:20480',
         ]);
 
