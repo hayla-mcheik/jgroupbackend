@@ -9,7 +9,7 @@ class MilestoneController extends Controller
 {
     public function index()
 {
-    $milestone = Milestones::orderBy('id', 'asc')->get();
+    $milestone = Milestones::orderBy('date', 'asc')->get();
     return response()->json($milestone);
 }
 
